@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bestmark — Every best. On the record.</title>
+<style>
+  :root{
+    --ink:#0F1E2E; --ink2:#152a3f; --green:#00C982; --paper:#F7F9FB;
+    --slate:#5C7080; --gold:#FFC53D;
+    --run:#FF6B5E; --swim:#3AA0FF; --bike:#FFB020; --tri:#8B5CF6;
+    --mono:'SFMono-Regular',ui-monospace,'IBM Plex Mono',Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--ink);color:var(--paper);font:16px/1.55 'Inter',system-ui,-apple-system,'Segoe UI',sans-serif}
+  a{color:var(--green);text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  header{position:sticky;top:0;background:rgba(15,30,46,.92);backdrop-filter:blur(8px);border-bottom:1px solid #22384e;z-index:10}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:20px;letter-spacing:-.02em;color:var(--paper);cursor:pointer}
+  .tick{width:22px;height:22px}
+  .btn{display:inline-block;background:var(--green);color:var(--ink);border:none;border-radius:8px;
+       padding:10px 18px;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--paper);border:1px solid #35506b}
+
+  .hero{padding:70px 0 50px;text-align:center}
+  .hero h1{font-size:clamp(30px,5vw,52px);letter-spacing:-.03em;line-height:1.12;font-weight:700}
+  .hero h1 em{color:var(--green);font-style:normal}
+  .hero p{color:#9fb2c2;max-width:620px;margin:16px auto 28px}
+
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:28px 0 18px}
+  .controls input[type=search]{flex:1;min-width:220px;background:var(--ink2);border:1px solid #2a4159;border-radius:8px;
+    padding:10px 14px;color:var(--paper);font:inherit}
+  .chip{border:1px solid #2a4159;background:transparent;color:#9fb2c2;border-radius:999px;padding:7px 14px;
+    cursor:pointer;font:600 13px/1 inherit}
+  .chip.on{background:var(--green);border-color:var(--green);color:var(--ink)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding-bottom:60px}
+  .card{background:var(--ink2);border:1px solid #22384e;border-radius:14px;padding:18px;cursor:pointer;transition:.15s}
+  .card:hover{border-color:var(--green);transform:translateY(-2px)}
+  .card h3{font-size:17px;letter-spacing:-.01em}
+  .handle{color:var(--slate);font-size:13px}
+  .meta{color:#9fb2c2;font-size:13px;margin:6px 0 10px}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tag{font:600 11px/1 inherit;padding:4px 9px;border-radius:999px;color:var(--ink)}
+  .t-run{background:var(--run)} .t-swim{background:var(--swim)} .t-bike{background:var(--bike)} .t-tri{background:var(--tri)}
+  .bestrow{display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-top:1px solid #22384e}
+  .bestrow .t{font-family:var(--mono);font-weight:600}
+  .score{float:right;text-align:right}
+  .score b{display:block;font:700 22px/1 var(--mono);color:var(--gold)}
+  .score span{font-size:11px;color:var(--slate)}
+
+  dialog{border:none;border-radius:16px;background:var(--ink2);color:var(--paper);max-width:560px;width:92vw;
+    padding:0;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  dialog::backdrop{background:rgba(4,10,16,.7)}
+  .dbody{padding:26px}
+  .dbody h2{letter-spacing:-.02em;margin-bottom:4px}
+  .close{float:right;background:none;border:none;color:var(--slate);font-size:22px;cursor:pointer}
+  form label{display:block;font:600 13px/1 inherit;color:#9fb2c2;margin:14px 0 6px}
+  form input,form select{width:100%;background:var(--ink);border:1px solid #2a4159;border-radius:8px;
+    padding:10px 12px;color:var(--paper);font:inherit}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .sports-pick{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+  .prlist{margin-top:8px}
+  .pr-inputs{display:grid;grid-template-columns:1.4fr 1fr auto;gap:8px;margin-top:8px}
+  .mini{background:transparent;border:1px dashed #35506b;color:#9fb2c2;border-radius:8px;padding:8px;cursor:pointer;font:inherit;width:100%;margin-top:10px}
+  .err{color:var(--run);font-size:13px;margin-top:10px;display:none}
+
+  .profile .ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .mark{display:inline-flex;align-items:center;gap:5px;color:var(--green);font:600 11px/1 inherit}
+  .prtable{width:100%;border-collapse:collapse;margin-top:16px}
+  .prtable th{text-align:left;font:600 11px/1 inherit;color:var(--slate);text-transform:uppercase;letter-spacing:.06em;padding:8px 6px;border-bottom:1px solid #2a4159}
+  .prtable td{padding:9px 6px;border-bottom:1px solid #22384e;font-size:14px}
+  .prtable td.time{font-family:var(--mono);font-weight:600}
+  .prtable td.sc{font-family:var(--mono);color:var(--gold);text-align:right}
+  footer{border-top:1px solid #22384e;color:var(--slate);font-size:13px;padding:24px 0;text-align:center}
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+  <div class="logo" onclick="scrollTo({top:0,behavior:'smooth'})">
+    <svg class="tick" viewBox="0 0 24 24" fill="none"><path d="M4 13l5 6L21 4" stroke="#00C982" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    bestmark
+  </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn ghost" onclick="document.getElementById('athletes').scrollIntoView({behavior:'smooth'})">Browse athletes</button>
+    <button class="btn" id="joinBtn" onclick="openSignup()">Sign up</button>
+  </div>
+</div></header>
+
+<section class="hero wrap">
+  <h1>Every best. <em>On the record.</em></h1>
+  <p>One profile for all your personal records — running, swimming, cycling, and triathlon.
+     Sign up, post your bests, and see how every athlete here stacks up.</p>
+  <button class="btn" onclick="openSignup()">Create your profile</button>
+</section>
+
+<main class="wrap" id="athletes">
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search athletes by name or handle…" oninput="render()">
+    <button class="chip on" data-s="all" onclick="setFilter(this)">All</button>
+    <button class="chip" data-s="run" onclick="setFilter(this)">Run</button>
+    <button class="chip" data-s="swim" onclick="setFilter(this)">Swim</button>
+    <button class="chip" data-s="bike" onclick="setFilter(this)">Bike</button>
+    <button class="chip" data-s="tri" onclick="setFilter(this)">Tri</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>Bestmark — demo release. New sign-ups are stored in your browser (localStorage). Verified marks shown for seeded official results.</footer>
+
+<!-- Sign-up dialog -->
+<dialog id="signup"><div class="dbody">
+  <button class="close" onclick="document.getElementById('signup').close()">×</button>
+  <h2>Join Bestmark</h2>
+  <p class="handle">Your bests, one shareable profile.</p>
+  <form id="signupForm" onsubmit="return submitSignup(event)">
+    <div class="row2">
+      <div><label>Name</label><input required id="f_name" placeholder="Alex Rivera"></div>
+      <div><label>Handle</label><input required id="f_handle" placeholder="alexr" pattern="[a-zA-Z0-9_]{2,20}"></div>
+    </div>
+    <div class="row2">
+      <div><label>Age</label><input required id="f_age" type="number" min="10" max="99" value="30"></div>
+      <div><label>Country</label><input id="f_country" placeholder="Canada"></div>
+    </div>
+    <label>Sports</label>
+    <div class="sports-pick" id="f_sports">
+      <button type="button" class="chip" data-s="run" onclick="this.classList.toggle('on')">Run</button>
+      <button type="button" class="chip" data-s="swim" onclick="this.classList.toggle('on')">Swim</button>
+      <button type="button" class="chip" data-s="bike" onclick="this.classList.toggle('on')">Bike</button>
+      <button type="button" class="chip" data-s="tri" onclick="this.classList.toggle('on')">Tri</button>
+    </div>
+    <label>Personal records</label>
+    <div class="prlist" id="prlist"></div>
+    <button type="button" class="mini" onclick="addPrRow()">+ Add another PR</button>
+    <div class="err" id="err"></div>
+    <button class="btn" style="width:100%;margin-top:18px">Create profile</button>
+  </form>
+</div></dialog>
+
+<!-- Profile dialog -->
+<dialog id="profileDlg"><div class="dbody profile" id="profileBody"></div></dialog>
+
+<script>
+// Reference bests (strong open-class benchmarks, seconds) for the demo Bestmark Score:
+// score = benchmark / time * 100, capped at 100.
+const EVENTS = {
+  "5K Run":      {sport:"run",  ref:755},
+  "10K Run":     {sport:"run",  ref:1571},
+  "Half Marathon":{sport:"run", ref:3444},
+  "Marathon":    {sport:"run",  ref:7235},
+  "100m Free":   {sport:"swim", ref:47},
+  "400m Free":   {sport:"swim", ref:220},
+  "1500m Free":  {sport:"swim", ref:871},
+  "40K Bike TT": {sport:"bike", ref:2880},
+  "Sprint Tri":  {sport:"tri",  ref:3300},
+  "Olympic Tri": {sport:"tri",  ref:6180},
+  "Ironman 70.3":{sport:"tri",  ref:13560}
+};
+
+const SEED = [
+  {name:"Maya Chen",handle:"mayatri",age:44,country:"USA",sports:["tri","run","swim"],verified:true,
+   prs:[["Olympic Tri","2:24:10"],["Half Marathon","1:34:12"],["1500m Free","21:45.0"],["Sprint Tri","1:12:40"]]},
+  {name:"Raj Patel",handle:"rajmasters",age:61,country:"UK",sports:["run","swim"],verified:true,
+   prs:[["5K Run","20:58"],["10K Run","43:37"],["400m Free","5:41.2"]]},
+  {name:"Sofia Almeida",handle:"sofruns",age:27,country:"Brazil",sports:["run"],verified:true,
+   prs:[["5K Run","16:41"],["10K Run","34:59"],["Half Marathon","1:16:22"],["Marathon","2:41:03"]]},
+  {name:"Tomás Ortega",handle:"tomasbike",age:35,country:"Spain",sports:["bike","tri"],verified:true,
+   prs:[["40K Bike TT","54:12"],["Ironman 70.3","4:31:20"]]},
+  {name:"Aiko Tanaka",handle:"aikoswim",age:22,country:"Japan",sports:["swim"],verified:true,
+   prs:[["100m Free","55.84"],["400m Free","4:21.07"],["1500m Free","17:12.9"]]},
+  {name:"Liam O'Connor",handle:"liamoc",age:39,country:"Ireland",sports:["run","tri"],verified:true,
+   prs:[["Marathon","3:02:44"],["Olympic Tri","2:41:55"],["10K Run","38:20"]]},
+  {name:"Fatima Zahra",handle:"fzahra",age:31,country:"Morocco",sports:["run"],verified:true,
+   prs:[["10K Run","36:48"],["Half Marathon","1:21:15"]]},
+  {name:"Erik Lindqvist",handle:"eriktt",age:48,country:"Sweden",sports:["bike"],verified:true,
+   prs:[["40K Bike TT","58:47"]]},
+];
+
+const store = { load(){ try{return JSON.parse(localStorage.getItem("bestmark_users")||"[]")}catch(e){return[]} },
+                save(u){ localStorage.setItem("bestmark_users",JSON.stringify(u)) } };
+let filter="all";
+
+function toSec(t){
+  const p=t.trim().split(":").map(Number);
+  if(p.some(isNaN))return null;
+  return p.reduce((a,v)=>a*60+v,0);
+}
+function scoreOf(ev,t){
+  const e=EVENTS[ev],s=toSec(t);
+  if(!e||!s||s<=0)return null;
+  return Math.min(100,Math.round(e.ref/s*1000)/10);
+}
+function bestScore(a){
+  const ss=a.prs.map(([e,t])=>scoreOf(e,t)).filter(v=>v!=null);
+  return ss.length?Math.max(...ss):0;
+}
+function allAthletes(){ return [...SEED,...store.load()]; }
+
+function setFilter(btn){
+  document.querySelectorAll(".controls .chip").forEach(c=>c.classList.remove("on"));
+  btn.classList.add("on"); filter=btn.dataset.s; render();
+}
+
+function render(){
+  const q=(document.getElementById("q").value||"").toLowerCase();
+  const grid=document.getElementById("grid"); grid.innerHTML="";
+  allAthletes()
+    .filter(a=>filter==="all"||a.sports.includes(filter))
+    .filter(a=>!q||a.name.toLowerCase().includes(q)||a.handle.toLowerCase().includes(q))
+    .sort((a,b)=>bestScore(b)-bestScore(a))
+    .forEach(a=>{
+      const card=document.createElement("div"); card.className="card";
+      const tops=a.prs.slice(0,3).map(([e,t])=>
+        `<div class="bestrow"><span>${e}</span><span class="t">${t}</span></div>`).join("");
+      card.innerHTML=`
+        <div class="score"><b>${bestScore(a).toFixed(1)}</b><span>BEST SCORE</span></div>
+        <h3>${a.name} ${a.verified?'<span class="mark">✓</span>':""}</h3>
+        <div class="handle">@${a.handle}</div>
+        <div class="meta">${a.age} · ${a.country||"—"}</div>
+        <div class="tags">${a.sports.map(s=>`<span class="tag t-${s}">${s.toUpperCase()}</span>`).join("")}</div>
+        ${tops}`;
+      card.onclick=()=>openProfile(a);
+      grid.appendChild(card);
+    });
+  if(!grid.children.length) grid.innerHTML='<p style="color:var(--slate)">No athletes match.</p>';
+}
+
+function openProfile(a){
+  const rows=a.prs.map(([e,t])=>{
+    const sc=scoreOf(e,t);
+    return `<tr><td>${e} ${a.verified?'<span class="mark">✓ marked</span>':'<span style="color:var(--slate);font-size:11px">logged</span>'}</td>
+      <td class="time">${t}</td><td class="sc">${sc==null?"—":sc.toFixed(1)}</td></tr>`;
+  }).join("");
+  document.getElementById("profileBody").innerHTML=`
+    <button class="close" onclick="document.getElementById('profileDlg').close()">×</button>
+    <div class="ph"><div>
+      <h2>${a.name}</h2>
+      <div class="handle">bestmark.com/@${a.handle} · ${a.age} · ${a.country||"—"}</div>
+      <div class="tags" style="margin-top:10px">${a.sports.map(s=>`<span class="tag t-${s}">${s.toUpperCase()}</span>`).join("")}</div>
+    </div>
+    <div class="score"><b>${bestScore(a).toFixed(1)}</b><span>BEST SCORE</span></div></div>
+    <table class="prtable"><tr><th>Event</th><th>Best</th><th style="text-align:right">Score</th></tr>${rows}</table>`;
+  document.getElementById("profileDlg").showModal();
+}
+
+function addPrRow(){
+  const d=document.createElement("div"); d.className="pr-inputs";
+  d.innerHTML=`<select>${Object.keys(EVENTS).map(e=>`<option>${e}</option>`).join("")}</select>
+    <input placeholder="e.g. 21:04 or 1:34:12">
+    <button type="button" class="chip" onclick="this.parentNode.remove()">✕</button>`;
+  document.getElementById("prlist").appendChild(d);
+}
+function openSignup(){
+  const l=document.getElementById("prlist");
+  if(!l.children.length) addPrRow();
+  document.getElementById("signup").showModal();
+}
+function submitSignup(ev){
+  ev.preventDefault();
+  const err=document.getElementById("err"); err.style.display="none";
+  const handle=document.getElementById("f_handle").value.trim().toLowerCase();
+  if(allAthletes().some(a=>a.handle.toLowerCase()===handle)){
+    err.textContent="That handle is taken — pick another."; err.style.display="block"; return false;
+  }
+  const sports=[...document.querySelectorAll("#f_sports .chip.on")].map(c=>c.dataset.s);
+  if(!sports.length){ err.textContent="Pick at least one sport."; err.style.display="block"; return false; }
+  const prs=[];
+  for(const row of document.querySelectorAll("#prlist .pr-inputs")){
+    const e=row.querySelector("select").value, t=row.querySelector("input").value.trim();
+    if(!t) continue;
+    if(toSec(t)==null){ err.textContent=`"${t}" isn't a valid time — use mm:ss or h:mm:ss.`; err.style.display="block"; return false; }
+    prs.push([e,t]);
+  }
+  const user={ name:document.getElementById("f_name").value.trim(), handle,
+    age:+document.getElementById("f_age").value, country:document.getElementById("f_country").value.trim(),
+    sports, prs, verified:false };
+  const users=store.load(); users.push(user); store.save(users);
+  document.getElementById("signup").close();
+  document.getElementById("signupForm").reset();
+  document.getElementById("prlist").innerHTML="";
+  render(); openProfile(user);
+  return false;
+}
+render();
+</script>
+</body>
+</html>

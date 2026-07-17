@@ -18,6 +18,11 @@ The endurance-event market is ~$11B and growing ~8%/yr, yet an athlete's officia
 | **3a. Brand guidelines** | [`brand/brand-guidelines.md`](brand/brand-guidelines.md) | Name, tagline, logo direction, palette, typography, voice & tone, the Mark |
 | **3b. Business plan** | [`business/business-plan.md`](business/business-plan.md) | TAM/SAM/SOM, revenue model, growth engine, GTM phases, costs, risks, metrics |
 | **3c. Product outline** | [`product/product-outline.md`](product/product-outline.md) | Personas, core loops, feature phasing, IA, data model, ingestion strategy, stack |
+| **4. Website (demo)** | [`site/index.html`](site/index.html) | Working single-page site: sign up, browse every athlete, view PR profiles with Bestmark Scores |
+
+## Running the website
+
+`site/index.html` is fully self-contained — no build step, no server, no dependencies. Open it directly in a browser, or serve the `site/` folder with any static host (GitHub Pages works as-is). Sign-ups persist in the browser via localStorage; the directory ships with eight seeded athletes carrying verified marks so stats are browsable immediately.
 
 ## The decision, in brief
 
