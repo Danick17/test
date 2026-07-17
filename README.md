@@ -33,7 +33,9 @@ npm run build && npm start   # or: npm run dev
 
 Then open http://localhost:3000. The database (`web/data/bestmark.db`, auto-created and auto-seeded with eight verified athletes) is git-ignored.
 
-**Features:** sign-up with password (scrypt-hashed) and session cookies, log in/out, athlete directory with search and sport filters ranked by Bestmark Score, public profile pages at `/athletes/[handle]`, and add/update-PR for your own profile (self-reported PRs display as "logged", seeded official results as "✓ marked").
+**Features:** sign-up with password (scrypt-hashed) and session cookies, log in/out, athlete directory with search and sport filters ranked by Bestmark Score, public profile pages at `/athletes/[handle]`, add/update-PR for your own profile (self-reported PRs display as "logged", seeded official results as "✓ marked"), a **Training Hub** (`/articles`) with PR-improvement guides across all four sports and curated external reading, and an **AI coach** (`/coach`) — a chat that grounds training advice in the logged-in athlete's actual PRs.
+
+**AI coach configuration:** set `ANTHROPIC_API_KEY` in the server environment to enable the full coach (Claude Opus 4.8 via the official `@anthropic-ai/sdk`). Without a key, the coach falls back to a built-in deterministic plan that computes easy/tempo/interval paces from the athlete's best PR, so the feature works out of the box.
 
 The static `site/index.html` demo remains for zero-setup previewing; its sign-ups are browser-local only.
 
