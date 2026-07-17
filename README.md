@@ -18,11 +18,24 @@ The endurance-event market is ~$11B and growing ~8%/yr, yet an athlete's officia
 | **3a. Brand guidelines** | [`brand/brand-guidelines.md`](brand/brand-guidelines.md) | Name, tagline, logo direction, palette, typography, voice & tone, the Mark |
 | **3b. Business plan** | [`business/business-plan.md`](business/business-plan.md) | TAM/SAM/SOM, revenue model, growth engine, GTM phases, costs, risks, metrics |
 | **3c. Product outline** | [`product/product-outline.md`](product/product-outline.md) | Personas, core loops, feature phasing, IA, data model, ingestion strategy, stack |
-| **4. Website (demo)** | [`site/index.html`](site/index.html) | Working single-page site: sign up, browse every athlete, view PR profiles with Bestmark Scores |
+| **4. Static demo** | [`site/index.html`](site/index.html) | Self-contained single-page demo (localStorage sign-ups) — open directly in a browser |
+| **5. Web app (Next.js)** | [`web/`](web/) | The real application: accounts, shared database, public athlete profiles |
 
-## Running the website
+## Running the web app
 
-`site/index.html` is fully self-contained — no build step, no server, no dependencies. Open it directly in a browser, or serve the `site/` folder with any static host (GitHub Pages works as-is). Sign-ups persist in the browser via localStorage; the directory ships with eight seeded athletes carrying verified marks so stats are browsable immediately.
+The Next.js app in `web/` is the production-track version — sign-ups are real accounts stored in a shared SQLite database, so every visitor sees every athlete.
+
+```bash
+cd web
+npm install
+npm run build && npm start   # or: npm run dev
+```
+
+Then open http://localhost:3000. The database (`web/data/bestmark.db`, auto-created and auto-seeded with eight verified athletes) is git-ignored.
+
+**Features:** sign-up with password (scrypt-hashed) and session cookies, log in/out, athlete directory with search and sport filters ranked by Bestmark Score, public profile pages at `/athletes/[handle]`, and add/update-PR for your own profile (self-reported PRs display as "logged", seeded official results as "✓ marked").
+
+The static `site/index.html` demo remains for zero-setup previewing; its sign-ups are browser-local only.
 
 ## The decision, in brief
 
