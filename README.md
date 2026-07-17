@@ -19,7 +19,8 @@ The endurance-event market is ~$11B and growing ~8%/yr, yet an athlete's officia
 | **3b. Business plan** | [`business/business-plan.md`](business/business-plan.md) | TAM/SAM/SOM, revenue model, growth engine, GTM phases, costs, risks, metrics |
 | **3c. Product outline** | [`product/product-outline.md`](product/product-outline.md) | Personas, core loops, feature phasing, IA, data model, ingestion strategy, stack |
 | **4. Static demo** | [`site/index.html`](site/index.html) | Self-contained single-page demo (localStorage sign-ups) — open directly in a browser |
-| **5. Web app (Next.js)** | [`web/`](web/) | The real application: accounts, shared database, public athlete profiles |
+| **5. Web app (Next.js)** | [`web/`](web/) | The real application: accounts, shared database, public athlete profiles, Training Hub, AI coach — now an installable PWA |
+| **6. Mobile / App Store** | [`mobile/`](mobile/) | Capacitor native shell + [`APP-STORE-GUIDE.md`](mobile/APP-STORE-GUIDE.md) with the full submission walkthrough |
 
 ## Running the web app
 
