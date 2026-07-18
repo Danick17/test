@@ -32,6 +32,12 @@ db.exec(`
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     UNIQUE (athlete_id, event)
   );
+  CREATE TABLE IF NOT EXISTS follows (
+    follower_id INTEGER NOT NULL REFERENCES athletes(id) ON DELETE CASCADE,
+    athlete_id INTEGER NOT NULL REFERENCES athletes(id) ON DELETE CASCADE,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (follower_id, athlete_id)
+  );
   CREATE TABLE IF NOT EXISTS sessions (
     token TEXT PRIMARY KEY,
     athlete_id INTEGER NOT NULL REFERENCES athletes(id) ON DELETE CASCADE,

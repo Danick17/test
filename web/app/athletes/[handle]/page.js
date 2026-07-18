@@ -3,6 +3,7 @@ import db from '@/lib/db';
 import { bestScore, scoreOf } from '@/lib/score';
 import { currentAthlete } from '@/lib/auth';
 import AddPrForm from './add-pr-form';
+import ProfileActions from './profile-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +19,13 @@ export default async function AthletePage({ params }) {
   ).all(athlete.id);
   const me = await currentAthlete();
   const isOwner = me?.id === athlete.id;
+  const followers = db.prepare('SELECT COUNT(*) AS n FROM follows WHERE athlete_id = ?').get(athlete.id).n;
+  const isFollowing = me
+    ? Boolean(db.prepare('SELECT 1 FROM follows WHERE follower_id = ? AND athlete_id = ?').get(me.id, athlete.id))
+    : false;
+  const topPr = prs
+    .map((p) => ({ ...p, score: scoreOf(p.event, p.time_seconds) }))
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0];
 
   return (
     <main className="wrap">
@@ -31,6 +39,16 @@ export default async function AthletePage({ params }) {
         </div>
         <div className="score"><b>{bestScore(prs).toFixed(1)}</b><span>BEST SCORE</span></div>
       </div>
+
+      <ProfileActions
+        handle={athlete.handle}
+        name={athlete.name}
+        isOwner={isOwner}
+        loggedIn={Boolean(me)}
+        initialFollowing={isFollowing}
+        initialFollowers={followers}
+        bestPr={topPr ? { event: topPr.event, time: topPr.time_display, score: topPr.score } : null}
+      />
 
       <table className="prtable">
         <thead>

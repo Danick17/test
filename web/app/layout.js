@@ -37,6 +37,7 @@ export default async function RootLayout({ children }) {
           <div className="wrap nav">
             <Link className="logo" href="/"><Tick /> bestmark</Link>
             <nav className="navlinks">
+              <Link className="btn ghost" href="/leaderboards">Ranks</Link>
               <Link className="btn ghost" href="/articles">Articles</Link>
               <Link className="btn ghost" href="/coach">Coach</Link>
               {me ? (
