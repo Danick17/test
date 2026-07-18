@@ -32,6 +32,24 @@ db.exec(`
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     UNIQUE (athlete_id, event)
   );
+  CREATE TABLE IF NOT EXISTS races (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    event TEXT NOT NULL,             -- one of the EVENTS keys
+    date TEXT NOT NULL,              -- ISO date
+    location TEXT NOT NULL DEFAULT '',
+    source TEXT NOT NULL DEFAULT 'official',
+    UNIQUE (name, date)
+  );
+  CREATE TABLE IF NOT EXISTS results (
+    id INTEGER PRIMARY KEY,
+    race_id INTEGER NOT NULL REFERENCES races(id) ON DELETE CASCADE,
+    athlete_id INTEGER REFERENCES athletes(id) ON DELETE SET NULL,  -- null = unclaimed
+    athlete_name TEXT NOT NULL,      -- name as printed in the official results
+    place INTEGER,
+    time_display TEXT NOT NULL,
+    time_seconds REAL NOT NULL
+  );
   CREATE TABLE IF NOT EXISTS follows (
     follower_id INTEGER NOT NULL REFERENCES athletes(id) ON DELETE CASCADE,
     athlete_id INTEGER NOT NULL REFERENCES athletes(id) ON DELETE CASCADE,

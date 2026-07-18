@@ -1,9 +1,11 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import db from '@/lib/db';
 import { bestScore, scoreOf } from '@/lib/score';
 import { currentAthlete } from '@/lib/auth';
 import AddPrForm from './add-pr-form';
 import ProfileActions from './profile-actions';
+import { raceHistory } from '@/lib/results';
 
 export const dynamic = 'force-dynamic';
 
@@ -72,6 +74,30 @@ export default async function AthletePage({ params }) {
           })}
         </tbody>
       </table>
+
+      {(() => {
+        const history = raceHistory(athlete.id);
+        if (!history.length) return null;
+        return (
+          <>
+            <h2 style={{ letterSpacing: '-.01em', margin: '6px 0 0' }}>Race history <span className="mark">✓ official</span></h2>
+            <table className="prtable">
+              <thead><tr><th>Race</th><th>Date</th><th>Place</th><th style={{ textAlign: 'right' }}>Time</th></tr></thead>
+              <tbody>
+                {history.map((h) => (
+                  <tr key={`${h.race_id}`}>
+                    <td><Link href={`/results/${h.race_id}`} style={{ fontWeight: 600 }}>{h.name}</Link>
+                      <span className="handle"> {h.event} · {h.location}</span></td>
+                    <td>{h.date}</td>
+                    <td style={{ fontFamily: 'var(--mono)' }}>#{h.place}</td>
+                    <td className="time" style={{ textAlign: 'right' }}>{h.time_display}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        );
+      })()}
 
       {isOwner && <AddPrForm />}
     </main>
