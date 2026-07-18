@@ -63,6 +63,11 @@ db.exec(`
   );
 `);
 
+// Social profile columns (added after initial schema; guarded for existing DBs)
+for (const col of ['instagram', 'facebook', 'tiktok', 'strava']) {
+  try { db.exec(`ALTER TABLE athletes ADD COLUMN ${col} TEXT NOT NULL DEFAULT ''`); } catch { /* exists */ }
+}
+
 const SEED = [
   ['mayatri', 'Maya Chen', 44, 'USA', 'tri,run,swim',
     [['Olympic Tri', '2:24:10'], ['Half Marathon', '1:34:12'], ['1500m Free', '21:45'], ['Sprint Tri', '1:12:40']]],
@@ -96,6 +101,11 @@ if (db.prepare('SELECT COUNT(*) AS n FROM athletes').get().n === 0) {
     }
   });
   seed();
+  // Demo social links for a few seeded athletes
+  const setSocial = db.prepare(
+    'UPDATE athletes SET instagram = ?, strava = ?, tiktok = ?, facebook = ? WHERE handle = ?');
+  setSocial.run('mayachen.tri', 'maya_chen_tri', '', '', 'mayatri');
+  setSocial.run('sofruns', 'sofia.almeida.run', 'sofruns', '', 'sofruns');
 }
 
 export default db;

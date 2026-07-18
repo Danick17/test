@@ -6,13 +6,16 @@ import { currentAthlete } from '@/lib/auth';
 import AddPrForm from './add-pr-form';
 import ProfileActions from './profile-actions';
 import { raceHistory } from '@/lib/results';
+import SocialLinks from './social-links';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AthletePage({ params }) {
   const { handle } = await params;
   const athlete = db.prepare(
-    'SELECT id, handle, name, age, country, sports, verified FROM athletes WHERE handle = ? COLLATE NOCASE'
+    `SELECT id, handle, name, age, country, sports, verified,
+            instagram, facebook, tiktok, strava
+     FROM athletes WHERE handle = ? COLLATE NOCASE`
   ).get(handle);
   if (!athlete) notFound();
 
@@ -41,6 +44,11 @@ export default async function AthletePage({ params }) {
         </div>
         <div className="score"><b>{bestScore(prs).toFixed(1)}</b><span>BEST SCORE</span></div>
       </div>
+
+      <SocialLinks
+        isOwner={isOwner}
+        socials={{ instagram: athlete.instagram, facebook: athlete.facebook, tiktok: athlete.tiktok, strava: athlete.strava }}
+      />
 
       <ProfileActions
         handle={athlete.handle}
