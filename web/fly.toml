@@ -1,0 +1,35 @@
+# Fly.io config for Bestmark. Deploy from the web/ directory:
+#   fly launch --no-deploy   (accept this config; pick your region)
+#   fly volumes create bestmark_data --size 1
+#   fly secrets set ANTHROPIC_API_KEY=sk-... BESTMARK_IMPORT_KEY=<random>
+#   fly deploy
+app = "bestmark"
+primary_region = "yul"
+
+[build]
+
+[env]
+  BESTMARK_DATA_DIR = "/data"
+
+[[mounts]]
+  source = "bestmark_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  # SQLite lives on one volume — keep exactly one machine.
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/api/health"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

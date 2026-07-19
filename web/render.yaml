@@ -1,0 +1,20 @@
+# Render.com blueprint. In the Render dashboard: New → Blueprint → point at
+# this repo. Set ANTHROPIC_API_KEY and BESTMARK_IMPORT_KEY when prompted.
+services:
+  - type: web
+    name: bestmark
+    runtime: docker
+    rootDir: web
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: BESTMARK_DATA_DIR
+        value: /data
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: BESTMARK_IMPORT_KEY
+        sync: false
+    disk:
+      name: bestmark-data
+      mountPath: /data
+      sizeGB: 1
