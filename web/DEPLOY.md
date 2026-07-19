@@ -37,9 +37,30 @@ SQLite means **one machine** — don't scale past `min/max = 1` without moving t
 
 ## Option B — Render.com
 
-Push the repo to GitHub, then in Render: **New → Blueprint** and point it at the repo.
-`web/render.yaml` declares the Docker service, the `/data` disk, the health check, and
-prompts you for `ANTHROPIC_API_KEY` and `BESTMARK_IMPORT_KEY`. Click **Apply**.
+The Blueprint at the **repo root** (`render.yaml`) declares everything: the Docker
+service built from `web/`, the `/data` disk, the health check, an auto-generated
+`BESTMARK_IMPORT_KEY`, and an optional `ANTHROPIC_API_KEY` prompt. It is pinned to
+the development branch, so no merge is needed first.
+
+1. Go to [dashboard.render.com](https://dashboard.render.com) → **New → Blueprint**.
+2. Connect your GitHub account if you haven't, and select this repository.
+3. Render reads `render.yaml` and shows the plan. Paste your `ANTHROPIC_API_KEY`
+   in the prompt (or leave it empty — the coach falls back to offline mode).
+4. Click **Apply**. First build takes ~5 minutes; your app comes up at
+   `https://bestmark.onrender.com` (or `bestmark-xxxx` if the name is taken).
+5. Verify: `https://<your-url>/api/health` → `{"ok":true,...}`. The generated
+   `BESTMARK_IMPORT_KEY` is visible under the service's **Environment** tab —
+   that's the key timing partners use for `POST /api/import`.
+
+Costs: the `starter` instance (~$7/mo) is required because persistent disks
+aren't available on Render's free tier. **Free-tier variant** (demo only): in
+`render.yaml` change `plan: starter` → `plan: free` and delete the `disk:`
+block — the app runs free, but the database is ephemeral (sign-ups reset on
+every deploy/restart) and the service sleeps after 15 idle minutes (~50 s
+cold start on the next visit).
+
+After merging this branch to `main`, update or remove the `branch:` line in
+`render.yaml` so deploys track your default branch.
 
 ## Option C — Railway
 

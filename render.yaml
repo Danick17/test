@@ -1,0 +1,27 @@
+# Render.com Blueprint for Bestmark.
+# Deploy: dashboard.render.com → New → Blueprint → select this repo → Apply.
+# Blueprints must live at the repo root; the app itself is in web/ (rootDir).
+services:
+  - type: web
+    name: bestmark
+    runtime: docker
+    rootDir: web
+    # Pinned to the development branch so no merge is needed before deploying.
+    # After merging to main, change or remove this line.
+    branch: claude/athlete-stats-market-research-c6ynr8
+    plan: starter          # disks require a paid instance; see DEPLOY.md for the free-tier variant
+    region: ohio
+    numInstances: 1        # SQLite on a single disk — do not scale horizontally
+    healthCheckPath: /api/health
+    autoDeploy: true       # every push to the branch redeploys automatically
+    envVars:
+      - key: BESTMARK_DATA_DIR
+        value: /data
+      - key: BESTMARK_IMPORT_KEY
+        generateValue: true          # Render mints a random key; read it in the dashboard
+      - key: ANTHROPIC_API_KEY
+        sync: false                  # optional — paste to enable the full AI coach, or leave empty
+    disk:
+      name: bestmark-data
+      mountPath: /data
+      sizeGB: 1

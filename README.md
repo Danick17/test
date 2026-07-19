@@ -40,7 +40,7 @@ Then open http://localhost:3000. The database (`web/data/bestmark.db`, auto-crea
 
 **AI coach configuration:** set `ANTHROPIC_API_KEY` in the server environment to enable the full coach (Claude Opus 4.8 via the official `@anthropic-ai/sdk`). Without a key, the coach falls back to a built-in deterministic plan that computes easy/tempo/interval paces from the athlete's best PR, so the feature works out of the box.
 
-**Deploying to the public internet:** the app is a Next.js **standalone** build (single `node server.js` process) with a `/api/health` check and SQLite on a persistent volume. One-command deploy recipes for Fly.io, Render, Railway, and any Docker host are in [`web/DEPLOY.md`](web/DEPLOY.md); the repo ships `web/Dockerfile`, `web/fly.toml`, and `web/render.yaml` ready to use.
+**Deploying to the public internet:** the app is a Next.js **standalone** build (single `node server.js` process) with a `/api/health` check and SQLite on a persistent volume. One-command deploy recipes for Fly.io, Render, Railway, and any Docker host are in [`web/DEPLOY.md`](web/DEPLOY.md); the repo ships `web/Dockerfile`, `web/fly.toml`, and a root-level `render.yaml` Blueprint ready to use.
 
 The static `site/index.html` demo remains for zero-setup previewing; its sign-ups are browser-local only.
 
