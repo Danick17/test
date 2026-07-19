@@ -14,6 +14,7 @@ export default function CoachPage() {
   ]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  const [source, setSource] = useState('');
   const endRef = useRef(null);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
@@ -32,6 +33,7 @@ export default function CoachPage() {
         body: JSON.stringify({ messages: next.filter((m, i) => i > 0 || m.role === 'user') }),
       });
       const body = await res.json();
+      if (res.ok && body.source) setSource(body.source);
       setMessages((cur) => [...cur, {
         role: 'assistant',
         content: res.ok ? body.reply : (body.error ?? 'Something went wrong — try again.'),
@@ -84,6 +86,11 @@ export default function CoachPage() {
         />
         <button className="btn" disabled={busy || !input.trim()}>Send</button>
       </form>
+      {source === 'fallback' && (
+        <p className="handle" style={{ fontSize: 12, margin: '-46px 0 60px' }}>
+          Built-in coach: answers computed from your PRs. Claude-powered mode activates automatically when the server has an API key.
+        </p>
+      )}
     </main>
   );
 }

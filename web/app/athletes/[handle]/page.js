@@ -7,6 +7,7 @@ import AddPrForm from './add-pr-form';
 import ProfileActions from './profile-actions';
 import { raceHistory } from '@/lib/results';
 import SocialLinks from './social-links';
+import DeletePrButton from './delete-pr-button';
 
 export const dynamic = 'force-dynamic';
 
@@ -62,11 +63,11 @@ export default async function AthletePage({ params }) {
 
       <table className="prtable">
         <thead>
-          <tr><th>Event</th><th>Best</th><th style={{ textAlign: 'right' }}>Score</th></tr>
+          <tr><th>Event</th><th>Best</th><th style={{ textAlign: 'right' }}>Score</th>{isOwner && <th></th>}</tr>
         </thead>
         <tbody>
           {prs.length === 0 && (
-            <tr><td colSpan={3} style={{ color: 'var(--slate)' }}>No personal records yet.</td></tr>
+            <tr><td colSpan={isOwner ? 4 : 3} style={{ color: 'var(--slate)' }}>No personal records yet.</td></tr>
           )}
           {prs.map((p) => {
             const sc = scoreOf(p.event, p.time_seconds);
@@ -77,6 +78,7 @@ export default async function AthletePage({ params }) {
                 </td>
                 <td className="time">{p.time_display}</td>
                 <td className="sc">{sc == null ? '—' : sc.toFixed(1)}</td>
+                {isOwner && <td style={{ textAlign: 'right', width: 32 }}><DeletePrButton event={p.event} /></td>}
               </tr>
             );
           })}

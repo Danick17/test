@@ -3,6 +3,17 @@ import db from '@/lib/db';
 import { currentAthlete } from '@/lib/auth';
 import { EVENTS, toSeconds } from '@/lib/score';
 
+export async function DELETE(req) {
+  const me = await currentAthlete();
+  if (!me) return NextResponse.json({ error: 'Log in to manage your PRs.' }, { status: 401 });
+
+  const { event } = await req.json();
+  const info = db.prepare('DELETE FROM prs WHERE athlete_id = ? AND event = ?').run(me.id, event ?? '');
+  if (info.changes === 0)
+    return NextResponse.json({ error: 'No such PR on your board.' }, { status: 404 });
+  return NextResponse.json({ ok: true });
+}
+
 export async function POST(req) {
   const me = await currentAthlete();
   if (!me) return NextResponse.json({ error: 'Log in to add PRs.' }, { status: 401 });
